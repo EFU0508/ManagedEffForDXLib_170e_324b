@@ -25,7 +25,7 @@ namespace Sample
         static void Main()
         {
             SetOutApplicationLogValidFlag(FALSE);               /*log*/
-            SetMainWindowText("ManagedEffForDXLib");              /*タイトル*/
+            SetMainWindowText("ManagedEffForDXLib for C#");              /*タイトル*/
             ChangeWindowMode(TRUE);                     /*窓表示*/
             SetUseDirect3DVersion(DX_DIRECT3D_11);              /*directX ver*/
             SetGraphMode(1280, 720, 16);
@@ -268,6 +268,7 @@ namespace Sample
                     }
                 }
 
+                // 爆発
                 {
                     int i = 0;
                     while (i < Bomb.Count)

@@ -26,7 +26,6 @@ Module Program
         SetWaitVSyncFlag(DX.FALSE)                             ' 垂直同期
         SetAlwaysRunFlag(DX.TRUE)                             '  非アクティブでも動作
         SetUseDXArchiveFlag(DX.TRUE)                          '  dxaファイルをフォルダとする 
-        SetDrawScreen(DX_SCREEN_BACK)                      '  描画先を裏画面にセット 
         SetWindowUserCloseEnableFlag(DX.FALSE)                '  ×で勝手Windowを閉じないようにする
         Dim ret As Integer = DxLib_Init()
         If ret < 0 Then
@@ -38,6 +37,7 @@ Module Program
             DxLib_End()
             Throw New Exception("Effekseer_Init Error")
         End If
+        SetDrawScreen(DX_SCREEN_BACK)                      '  描画先を裏画面にセット 
         ''SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT)       ' これやるとおかしくなる
         MV1SetLoadModelUsePhysicsMode(DX_LOADMODEL_PHYSICS_LOADCALC)
         MV1SetLoadModelPhysicsWorldGravity(-9.8F)

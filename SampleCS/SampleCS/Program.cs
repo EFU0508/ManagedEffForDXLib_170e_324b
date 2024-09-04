@@ -39,7 +39,6 @@ namespace Sample
             SetWaitVSyncFlag(FALSE);                             /*垂直同期*/
             SetAlwaysRunFlag(TRUE);                             /* 非アクティブでも動作*/
             SetUseDXArchiveFlag(TRUE);                          /* dxaファイルをフォルダとする */
-            SetDrawScreen(DX_SCREEN_BACK);                      /* 描画先を裏画面にセット */
             SetWindowUserCloseEnableFlag(FALSE);                /* ×で勝手Windowを閉じないようにする*/
             int ret = DxLib_Init();
             if (ret < 0)
@@ -53,6 +52,7 @@ namespace Sample
                 DxLib_End();
                 throw new Exception("Effekseer_Init Error");
             }
+            SetDrawScreen(DX_SCREEN_BACK);                      /* 描画先を裏画面にセット */
             //SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);       /*これやるとおかしくなる*/
             MV1SetLoadModelUsePhysicsMode(DX_LOADMODEL_PHYSICS_LOADCALC);
             MV1SetLoadModelPhysicsWorldGravity(-9.8f);

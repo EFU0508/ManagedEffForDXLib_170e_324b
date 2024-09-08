@@ -53,7 +53,6 @@ namespace Sample
                 throw new Exception("Effekseer_Init Error");
             }
             SetDrawScreen(DX_SCREEN_BACK);                      /* 描画先を裏画面にセット */
-            //SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);       /*これやるとおかしくなる*/
             MV1SetLoadModelUsePhysicsMode(DX_LOADMODEL_PHYSICS_LOADCALC);
             MV1SetLoadModelPhysicsWorldGravity(-9.8f);
             SetCameraNearFar(0.1f, 1000.0f);                    /* 奥行0.1～1000までをカメラの描画範囲とする */

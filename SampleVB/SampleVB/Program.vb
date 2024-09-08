@@ -38,7 +38,6 @@ Module Program
             Throw New Exception("Effekseer_Init Error")
         End If
         SetDrawScreen(DX_SCREEN_BACK)                      '  描画先を裏画面にセット 
-        ''SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT)       ' これやるとおかしくなる
         MV1SetLoadModelUsePhysicsMode(DX_LOADMODEL_PHYSICS_LOADCALC)
         MV1SetLoadModelPhysicsWorldGravity(-9.8F)
         SetCameraNearFar(0.1F, 1000.0F)                    '  奥行0.1～1000までをカメラの描画範囲とする 

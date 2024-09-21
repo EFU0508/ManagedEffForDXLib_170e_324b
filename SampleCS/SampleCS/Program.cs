@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using static DX;
 
 namespace Sample
@@ -29,17 +25,7 @@ namespace Sample
             ChangeWindowMode(TRUE);                     /*窓表示*/
             SetUseDirect3DVersion(DX_DIRECT3D_11);              /*directX ver*/
             SetGraphMode(1280, 720, 16);
-            SetUseDirectInputFlag(TRUE);                        /*DirectInput使用*/
-            SetDirectInputMouseMode(FALSE);                     /*DirectInputマウス使用*/
-            SetWindowSizeChangeEnableFlag(FALSE, TRUE);         /*ウインドウサイズを手動変更不可、ウインドウサイズに合わせて拡大*/
-            SetUsePixelLighting(TRUE);                          /*ピクセルライティングの使用*/
-            SetFullSceneAntiAliasingMode(4, 2);                 /*アンチエイリアス*/
-            SetEnableXAudioFlag(TRUE);                          /*XAudioを用いるか*/
-            Set3DSoundOneMetre(1.0f);                           /*3Dオーディオの基準距離指定*/
-            SetWaitVSyncFlag(FALSE);                             /*垂直同期*/
-            SetAlwaysRunFlag(TRUE);                             /* 非アクティブでも動作*/
-            SetUseDXArchiveFlag(TRUE);                          /* dxaファイルをフォルダとする */
-            SetWindowUserCloseEnableFlag(FALSE);                /* ×で勝手Windowを閉じないようにする*/
+
             int ret = DxLib_Init();
             if (ret < 0)
             {
@@ -52,6 +38,18 @@ namespace Sample
                 DxLib_End();
                 throw new Exception("Effekseer_Init Error");
             }
+
+            SetUseDirectInputFlag(TRUE);                        /*DirectInput使用*/
+            SetDirectInputMouseMode(FALSE);                     /*DirectInputマウス使用*/
+            SetWindowSizeChangeEnableFlag(FALSE, TRUE);         /*ウインドウサイズを手動変更不可、ウインドウサイズに合わせて拡大*/
+            SetUsePixelLighting(TRUE);                          /*ピクセルライティングの使用*/
+            SetFullSceneAntiAliasingMode(4, 2);                 /*アンチエイリアス*/
+            SetEnableXAudioFlag(TRUE);                          /*XAudioを用いるか*/
+            Set3DSoundOneMetre(1.0f);                           /*3Dオーディオの基準距離指定*/
+            SetWaitVSyncFlag(FALSE);                             /*垂直同期*/
+            SetAlwaysRunFlag(TRUE);                             /* 非アクティブでも動作*/
+            SetUseDXArchiveFlag(TRUE);                          /* dxaファイルをフォルダとする */
+            SetWindowUserCloseEnableFlag(FALSE);                /* ×で勝手Windowを閉じないようにする*/
             SetDrawScreen(DX_SCREEN_BACK);                      /* 描画先を裏画面にセット */
             MV1SetLoadModelUsePhysicsMode(DX_LOADMODEL_PHYSICS_LOADCALC);
             MV1SetLoadModelPhysicsWorldGravity(-9.8f);
@@ -124,9 +122,9 @@ namespace Sample
             // 爆発
             int effectResourceHandle = LoadEffekseerEffect(".\\Pierre02\\Benediction.efkefc");
             List<effect> Bomb = new List<effect>();
-            Bomb.Clear(); 
+            Bomb.Clear();
 
-            while (!(ProcessMessage() == TRUE)  && !(ClearDrawScreen() == TRUE) && !(CheckHitKey(KEY_INPUT_ESCAPE) == TRUE))
+            while ((ProcessMessage() == 0) && (ClearDrawScreen() == 0) && (CheckHitKey(KEY_INPUT_ESCAPE) != TRUE))
             {
                 // fps
                 if (mCount == 0)
@@ -227,7 +225,7 @@ namespace Sample
                     int i = 0;
                     while (i < tama.Count)
                     {
-                        bool b = false;
+                        bool hit = false;
                         int j = 0;
                         while (j < inseki.Count)
                         {
@@ -237,7 +235,7 @@ namespace Sample
                             float z = (float)Math.Pow(inseki[j].z - tama[i].z, 2);
                             if ((x + y + z) <= (float)Math.Pow(1.0f + 0.1f, 2))
                             {
-                                b = true;
+                                hit = true;
                                 inseki.RemoveAt(j);
                                 break;
                             }
@@ -247,7 +245,7 @@ namespace Sample
                             }
                         }
 
-                        if (b)
+                        if (hit)
                         {
                             effect eff = new effect();
                             eff.EffectHandle = PlayEffekseer3DEffect(effectResourceHandle);
@@ -289,9 +287,6 @@ namespace Sample
                 // Effekseerにより再生中のエフェクトを更新する。
                 UpdateEffekseer3D();
 
-                // 画面のクリア
-                ClearDrawScreen();
-
                 DrawString(0, 0, mFps.ToString(), GetColor(255, 255, 255));
 
                 // 本体表示
@@ -329,9 +324,6 @@ namespace Sample
                 // Effekseerにより再生中のエフェクトを描画する。
                 DrawEffekseer3D();
 
-                // 裏画面の内容を表画面に反映させる
-                ScreenFlip();
-
                 // fps
                 int tookTime = GetNowCount() - mStartTime;  //かかった時間
                 int waitTime = mCount * 1000 / FPS - tookTime;  //待つべき時間
@@ -339,6 +331,9 @@ namespace Sample
                 {
                     Thread.Sleep(waitTime);  //待機
                 }
+
+                // 裏画面の内容を表画面に反映させる
+                ScreenFlip();
             }
 
 

@@ -3,7 +3,6 @@ Imports DX
 
 
 Module Program
-
     Structure effect
         Public EffectHandle As Integer
         Public EffectTime As Integer
@@ -16,6 +15,18 @@ Module Program
         ChangeWindowMode(DX.TRUE)                     ' 窓表示
         SetUseDirect3DVersion(DX_DIRECT3D_11)              ' directX ver
         SetGraphMode(1280, 720, 16)
+
+        Dim ret As Integer = DxLib_Init()
+        If ret < 0 Then
+            Throw New Exception("DxLib_Init Error")
+        End If
+        ' Effekseerを初期化する。
+        ' 引数には画面に表示する最大パーティクル数を設定する。
+        If Effekseer_Init(8000) = -1 Then
+            DxLib_End()
+            Throw New Exception("Effekseer_Init Error")
+        End If
+
         SetUseDirectInputFlag(DX.TRUE)                        ' DirectInput使用
         SetDirectInputMouseMode(DX.FALSE)                     ' DirectInputマウス使用
         SetWindowSizeChangeEnableFlag(DX.FALSE, DX.TRUE)         ' ウインドウサイズを手動変更不可、ウインドウサイズに合わせて拡大
@@ -27,16 +38,6 @@ Module Program
         SetAlwaysRunFlag(DX.TRUE)                             '  非アクティブでも動作
         SetUseDXArchiveFlag(DX.TRUE)                          '  dxaファイルをフォルダとする 
         SetWindowUserCloseEnableFlag(DX.FALSE)                '  ×で勝手Windowを閉じないようにする
-        Dim ret As Integer = DxLib_Init()
-        If ret < 0 Then
-            Throw New Exception("DxLib_Init Error")
-        End If
-        ' Effekseerを初期化する。
-        ' 引数には画面に表示する最大パーティクル数を設定する。
-        If Effekseer_Init(8000) = -1 Then
-            DxLib_End()
-            Throw New Exception("Effekseer_Init Error")
-        End If
         SetDrawScreen(DX_SCREEN_BACK)                      '  描画先を裏画面にセット 
         MV1SetLoadModelUsePhysicsMode(DX_LOADMODEL_PHYSICS_LOADCALC)
         MV1SetLoadModelPhysicsWorldGravity(-9.8F)
@@ -111,7 +112,7 @@ Module Program
         Dim Bomb As New List(Of effect)()
         Bomb.Clear()
 
-        Do While Not (ProcessMessage() = DX.TRUE) And Not (ClearDrawScreen() = DX.TRUE) And Not (CheckHitKey(KEY_INPUT_ESCAPE) = DX.TRUE)
+        Do While ((ProcessMessage() = 0) And (ClearDrawScreen() = 0) And (CheckHitKey(KEY_INPUT_ESCAPE) <> DX.TRUE))
             ' fps
             If mCount = 0 Then ' 1フレーム目なら時刻を記憶
                 mStartTime = GetNowCount()
@@ -234,9 +235,6 @@ Module Program
             ' Effekseerにより再生中のエフェクトを更新する。
             UpdateEffekseer3D()
 
-            ' 画面のクリア
-            ClearDrawScreen()
-
             DrawString(0, 0, mFps.ToString(), GetColor(255, 255, 255))
 
             ' 本体表示
@@ -272,15 +270,15 @@ Module Program
             ' Effekseerにより再生中のエフェクトを描画する。.
             DrawEffekseer3D()
 
-            ' 裏画面の内容を表画面に反映させる
-            ScreenFlip()
-
             ' fps
             Dim tookTime As Integer = GetNowCount() - mStartTime ' かかった時間
             Dim waitTime As Integer = mCount * 1000 / FPS - tookTime ' 待つべき時間
             If waitTime > 0 Then
                 Thread.Sleep(waitTime) ' 待機
             End If
+
+            ' 裏画面の内容を表画面に反映させる
+            ScreenFlip()
         Loop
 
         '' Effekseerを終了する。
